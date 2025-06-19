@@ -3,7 +3,10 @@ pipeline {
   environment {
     AWS_DEFAULT_REGION = 'us-east-1'
     ECR_REPO_NAME = 'payment-service-repo'
+    DOCKERFILE_PATH = 'dockerfiles/Dockerfile-payment'
     IMAGE_TAG = "${BUILD_NUMBER}"
+    AWS_ACCESS_KEY_ID = credentials('microservice-id')
+    AWS_SECRET_ACCESS_KEY = credentials('microservice-id')
   }
   stages {
     stage('Checkout') {
@@ -13,7 +16,7 @@ pipeline {
     }
     stage('Docker Build') {
       steps {
-        sh 'docker build -t $ECR_REPO_NAME:$IMAGE_TAG -f dockerfiles/Dockerfile-payment .'
+        sh 'docker build -t $ECR_REPO_NAME:$IMAGE_TAG -f $DOCKERFILE_PATH .'
       }
     }
     stage('ECR Login') {
