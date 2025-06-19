@@ -1,0 +1,15 @@
+*.pyc
+__pycache__/
+.env
+.venv/
+terraform.tfstate
+terraform.tfstate.backup
+*.log
+*.zip
+node_modules/
+*.pem
+*.key
+*.tar
+*.iso
+*.bin
+cd ..

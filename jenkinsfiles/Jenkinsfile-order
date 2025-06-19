@@ -1,0 +1,36 @@
+pipeline {
+  agent any
+  environment {
+    AWS_DEFAULT_REGION = 'us-east-1'
+    ECR_REPO_NAME = 'order-service-repo'
+    IMAGE_TAG = "${BUILD_NUMBER}"
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: 'main', url: 'https://github.com/harikrishnaB18/microservices-project-clean.git'
+      }
+    }
+    stage('Docker Build') {
+      steps {
+        sh 'docker build -t $ECR_REPO_NAME:$IMAGE_TAG -f dockerfiles/Dockerfile-order .'
+      }
+    }
+    stage('ECR Login') {
+      steps {
+        sh 'aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 269031123955.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com'
+      }
+    }
+    stage('Docker Push') {
+      steps {
+        sh 'docker tag $ECR_REPO_NAME:$IMAGE_TAG 269031123955.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPO_NAME:$IMAGE_TAG'
+        sh 'docker push 269031123955.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPO_NAME:$IMAGE_TAG'
+      }
+    }
+    stage('Deploy to ECS') {
+      steps {
+        sh 'aws ecs update-service --cluster microservices-cluster --service order-service --force-new-deployment'
+      }
+    }
+  }
+}
