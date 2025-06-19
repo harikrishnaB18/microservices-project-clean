@@ -4,6 +4,8 @@ pipeline {
     AWS_DEFAULT_REGION = 'us-east-1'
     ECR_REPO_NAME = 'user-service-repo'
     IMAGE_TAG = "${BUILD_NUMBER}"
+    AWS_ACCESS_KEY_ID = credentials('microservice-id')
+    AWS_SECRET_ACCESS_KEY = credentials('microservice-id')
   }
   stages {
     stage('Checkout') {
